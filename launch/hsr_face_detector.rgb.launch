@@ -3,7 +3,7 @@
   <arg name="image_topic" default="image_raw" />
   <arg name="depth_topic" default="image_raw" />
   <arg name="fixed_frame" default="head_rgb_sensor_rgbd_frame" />
-  <arg name="depth_ns" default="depth" />
+  <arg name="depth_ns" default="depth_registered" />
 
   <!--include file="$(find openni2_launch)/launch/openni2.launch"/-->
   <node name="$(anon dynparam)" pkg="dynamic_reconfigure" type="dynparam" args="set_from_parameters $(arg camera)/driver">
