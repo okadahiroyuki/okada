@@ -1,6 +1,18 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
+"""
+    Microsoft translator API
+
+    An example::
+
+ 
+    The project is hosted on GitHub where your could fork the project or report
+    issues. Visit https://github.com/****************
+
+    :copyright: © 2015 by Hiroyuki Okada & Tamagawa University
+    :license: BSD, see LICENSE for more details.
+"""
 import hsrb_interface
 import rospy
 import sys
@@ -21,6 +33,26 @@ hand_up = geometry.pose(x=0.1)
 
 # handを0.5[m]手前に移動させる姿勢
 hand_back = geometry.pose(z=-0.5)
+
+def hello(msg):
+    """
+    こんにちわ。
+    
+    :param string msg: 出力するメッセージ
+    """
+    print msg
+
+def add(a, b):
+    """
+    足し算ぐらいできます。
+    
+    :param int a: 足される値。
+    :param int b: 足す値。
+    :rtype: int
+    :return: 足し算した数値。
+    :todo: sample.py/def add - 例外出たときどうするんだろ。誰か直しといて。
+    """
+    return a + b
 
 if __name__=='__main__':
 
