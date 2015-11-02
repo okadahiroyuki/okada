@@ -3,7 +3,7 @@
 # -*- Python -*-
 
 """
- @file .py
+ @file ChatDoCoMoAPI.py
  @brief 
  @date $Date$
 
