@@ -1,0 +1,6 @@
+string data
+---
+bool success
+string commandId
+string commandName 
+string[] slotValue

@@ -55,6 +55,8 @@ catkin_python_setup()
 add_service_files(
   FILES
   QaQuery.srv
+  ScenarioQuery.srv
+  SentenceUnderstandingQuery.srv
 #   Service1.srv
 #   Service2.srv
 )
