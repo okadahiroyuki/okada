@@ -9,8 +9,8 @@
 		<param name="objects_path" value="" type="str"/>
 		<param name="object_prefix" value="object" type="str"/>
 		
-		<remap from="rgb/image_rect_color" to="/hsrb/head_rgbd_sensor/rgb/image_raw"/>
-		<remap from="depth_registered/image_raw" to=/hsrb/head_rgbd_sensor/depth_registered/image_raw"/>
+		<remap from="rgb/image_rect_color" to="/hsrb/head_rgbd_sensor/rgb/image_rect_color"/>
+		<remap from="depth_registered/image_raw" to="/hsrb/head_rgbd_sensor/depth_registered/image_raw"/>
 		<remap from="depth_registered/camera_info" to="/hsrb/head_rgbd_sensor/depth_registered/camera_info"/>
 	</node>
 	
