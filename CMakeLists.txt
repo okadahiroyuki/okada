@@ -45,16 +45,19 @@ catkin_python_setup()
 ##   * add every package in MSG_DEP_SET to generate_messages(DEPENDENCIES ...)
 
 ## Generate messages in the 'msg' folder
-# add_message_files(
-#   FILES
+add_message_files(
+   FILES
+   DoCoMoChatReq.msg
+   DoCoMoChatRes.msg
 #   Message1.msg
 #   Message2.msg
-# )
+)
 
 ## Generate services in the 'srv' folder
 add_service_files(
   FILES
   QaQuery.srv
+  DoCoMoChat.srv
   ScenarioQuery.srv
   SentenceUnderstandingQuery.srv
 #   Service1.srv

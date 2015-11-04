@@ -1,0 +1,5 @@
+#DoCoMo Dialogue API Request message
+Header header
+string utt 
+string context 
+string nickname
