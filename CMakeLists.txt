@@ -49,6 +49,13 @@ add_message_files(
    FILES
    DoCoMoChatReq.msg
    DoCoMoChatRes.msg
+   DoCoMoQaReq.msg
+   DoCoMoQaRes.msg
+   DoCoMoQaAnswer.msg
+   DoCoMoScenarioReq.msg 
+   DoCoMoScenarioRes.msg 
+   DoCoMoSentenceUnderstandingRes.msg 
+   DoCoMoSentenceUnderstandingReq.msg 
 #   Message1.msg
 #   Message2.msg
 )
@@ -56,10 +63,9 @@ add_message_files(
 ## Generate services in the 'srv' folder
 add_service_files(
   FILES
-  QaQuery.srv
   DoCoMoChat.srv
-  ScenarioQuery.srv
-  SentenceUnderstandingQuery.srv
+  DoCoMoQa.srv
+  DoCoMoScenario.srv
 #   Service1.srv
 #   Service2.srv
 )
