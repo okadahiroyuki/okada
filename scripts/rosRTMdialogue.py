@@ -22,6 +22,16 @@ import rospy
 from std_msgs.msg import String
 from std_msgs.msg import Int32
 
+# for HSR
+#import hsrb_interface
+#from hsrb_interface import geometry
+#import tmc_msgs
+
+# ロボット機能を使うための準備
+#robot = hsrb_interface.Robot()
+#tts = robot.get('default', robot.Items.TEXT_TO_SPEECH)
+
+
 # Import Service implementation class
 # <rtc-template block="service_impl">
 
@@ -139,6 +149,17 @@ class rosRTMdialogue(OpenRTM_aist.DataFlowComponentBase):
 		pub = rospy.Publisher('hsr_c', Int32)	
 		rospy.loginfo('start ROS node')
 		rospy.Subscriber('hsr_s',Int32, callback)
+
+		global hsrb_talk
+#		hsrb_talk = rospy.Publisher('hsr_t', tmc_msgs.Voice)	
+#		hsrb_talk = rospy.Publisher('hsr_t', Voice)	
+#		hsrb_talk = rospy.Publisher('hsr_t', Int32)	
+
+                # まずは一言
+#                rospy.sleep(5.0)
+#                tts.say('こんにちはHSRだよ。これから部屋の中を移動するよ。')
+#                rospy.sleep(5.0)
+
 		return RTC.RTC_OK
 	
 

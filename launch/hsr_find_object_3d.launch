@@ -1,6 +1,8 @@
 <launch>
 	<!-- Example finding 3D poses of the objects detected -->
 	<!-- $roslaunch openni_launch openni.launch depth_registration:=true -->
+
+	<node pkg="dynamic_reconfigure" type="dynparam" name="dynparam" args="set /hsrb/head_rgbd_sensor/driver depth_registration true" />
 	
 	<node name="find_object_3d" pkg="find_object_2d" type="find_object_2d" output="screen">
 		<param name="gui" value="true" type="bool"/>

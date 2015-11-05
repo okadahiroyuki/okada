@@ -16,6 +16,9 @@ print "state OPEN"
     <rule>
       <key source="speechin">いれいさー こんにちは</key>
       <message sendto="speechout">皆さんこんにちは私の名前はいれいさーです。僕は家庭でみんなにサービスをするために生まれたんだ。</message>
+      <script sendto="speechout">
+print "state Hello"
+      </script>
     </rule>
     <rule>
       <key source="speechin">いれいさー へやからでて</key>
