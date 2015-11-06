@@ -18,8 +18,8 @@ sys.path.append(".")
 import rospy
 from std_msgs.msg import String
 from rospeex_if import ROSpeexInterface
-from okada.srv import QaQuery
-from okada.srv import QaQueryResponse
+from okada.srv import DoCoMoQa
+from okada.srv import DoCoMoQaResponse
 import urllib2
 import urllib
 import json
@@ -35,7 +35,7 @@ class DoCoMoQA(object):
         rospy.init_node('docomo')
         rospy.loginfo("start DoCoMoQA node")
 
-        service_server = rospy.Service('docomo_qa', QaQuery, self.Qa_handler)
+        service_server = rospy.Service('docomo_qa', DoCoMoQA, self.Qa_handler)
         rospy.loginfo("start DoCoMoQA service server")
 
         self.url = rospy.get_param("~qa_url", "https://api.apigw.smt.docomo.ne.jp/knowledgeQA/v1/ask?")

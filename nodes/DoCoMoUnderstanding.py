@@ -21,8 +21,8 @@ from okada.msg import DoCoMoUnderstandingReq
 from okada.msg import DoCoMoUnderstandingRes
 from okada.srv import DoCoMoUnderstanding
 from okada.srv import DoCoMoUnderstandingResponse
-#from okada.srv import *
-#from okada.msg import *
+from okada.srv import *
+from okada.msg import *
 import urllib2
 import urllib
 import json
@@ -57,7 +57,7 @@ class DoCoMoSentenceUnderstanding(object):
         # initialize ros node
         rospy.init_node('docomoSentenceUnderstanding')
         rospy.loginfo("start DoCoMoSentenceUnderstanding node")
-        service_server = rospy.Service('docomo_sentenceunderstanding',DoCoMoUnderstanding,self.SentenceUnderstanding_handler)
+        service_server = rospy.Service('docomo_sentenceunderstanding',DoCoMoSentenceUnderstanding,self.SentenceUnderstanding_handler)
         rospy.loginfo("start DoCoMoSentenceUnderstanding service server")
 
         self.APIKEY = rospy.get_param("~APIKEY", "4e4e61744672324d792f533965647867467767654978717445316a3337696430386b453371715246456238")
@@ -67,11 +67,8 @@ class DoCoMoSentenceUnderstanding(object):
         rospy.spin()        
 
     def SentenceUnderstanding_handler(self, query):
-        rospy.loginfo("DoCoMoScenario Query:%s", query)
-        req=query.request
-        print req.utteranceText
-        (json_data['userUtterance'])['utteranceText'] = req.utteranceText
-
+        rospy.loginfo("DoCoMoScenario Query:%s", query.data)
+        (json_data['userUtterance'])['utteranceText'] = query.data
         
 
         data={}
@@ -87,10 +84,9 @@ class DoCoMoSentenceUnderstanding(object):
             response = urllib2.urlopen(req,json.dumps(json_data))
             the_page=json.load(response)
 
-	    print the_page
-            #key =  the_page['projectKey']
-            #userU = the_page['userUtterance']
-            #UT=userU['utteranceText']
+            key =  the_page['projectKey']
+            userU = the_page['userUtterance']
+            UT=userU['utteranceText']
 
             cId   = ((the_page['dialogStatus'])['command'])['commandId']
             cName = ((the_page['dialogStatus'])['command'])['commandName']

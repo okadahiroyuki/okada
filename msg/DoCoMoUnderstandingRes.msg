@@ -1,4 +1,4 @@
-#DoCoMo ScenarioDialogue API Response message
+#DoCoMo Sentence Understanding API Response message
 Header header
 string projectKey
 string appName
@@ -9,7 +9,7 @@ string language
 string userId
 string commandId
 string commandName
-DoCoMoSentenceUnderstandingSlotStatus[] slotStatus
+DoCoMoUnderstandingSlotStatus[] slotStatus
 string contentSource
 string contentType
 string contentEncode
@@ -19,6 +19,6 @@ string utteranceText
 string utteranceRevised
 string utteranceWord
 string taskIdList
-DoCoMoSentenceUnderstandingEtractedWords[] extractedWords
+DoCoMoUnderstandingEtractedWords[] extractedWords
 string serverSendTime
 

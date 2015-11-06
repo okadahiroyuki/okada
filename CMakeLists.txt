@@ -55,8 +55,14 @@ add_message_files(
    DoCoMoScenarioReq.msg 
    DoCoMoScenarioRes.msg 
    DoCoMoSentenceUnderstandingRes.msg 
+   DoCoMoSentenceUnderstandingRes.msg 
    DoCoMoSentenceUnderstandingReq.msg 
-#   Message1.msg
+   DoCoMoSentenceUnderstandingSlotStatus.msg 
+   DoCoMoUnderstandingEtractedWords.msg
+   DoCoMoUnderstandingReq.msg 
+   DoCoMoUnderstandingSlotStatus.msg 
+   DoCoMoUnderstandingEtractedWords.msg
+#   Message0.msg
 #   Message2.msg
 )
 
@@ -66,6 +72,8 @@ add_service_files(
   DoCoMoChat.srv
   DoCoMoQa.srv
   DoCoMoScenario.srv
+  DoCoMoSentenceUnderstanding.srv
+  DoCoMoUnderstanding.srv
 #   Service1.srv
 #   Service2.srv
 )
