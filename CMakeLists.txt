@@ -54,11 +54,11 @@ add_message_files(
    DoCoMoQaAnswer.msg
    DoCoMoScenarioReq.msg 
    DoCoMoScenarioRes.msg 
-   DoCoMoSentenceUnderstandingRes.msg 
-   DoCoMoSentenceUnderstandingRes.msg 
-   DoCoMoSentenceUnderstandingReq.msg 
-   DoCoMoSentenceUnderstandingSlotStatus.msg 
-   DoCoMoUnderstandingEtractedWords.msg
+#   DoCoMoSentenceUnderstandingRes.msg 
+#   DoCoMoSentenceUnderstandingReq.msg 
+#   DoCoMoSentenceUnderstandingSlotStatus.msg 
+#   DoCoMoUnderstandingEtractedWords.msg
+   DoCoMoUnderstandingRes.msg 
    DoCoMoUnderstandingReq.msg 
    DoCoMoUnderstandingSlotStatus.msg 
    DoCoMoUnderstandingEtractedWords.msg
