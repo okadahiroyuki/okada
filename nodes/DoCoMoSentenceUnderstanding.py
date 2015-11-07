@@ -69,12 +69,22 @@ class DoCoMoSentenceUnderstanding(object):
     def SentenceUnderstanding_handler(self, query):
         rospy.loginfo("DoCoMoScenario Query:%s", query)
         req=query.request
-        print req.utteranceText
         (json_data['userUtterance'])['utteranceText'] = req.utteranceText
+        if not req.projectKey:
+            json_data['projectKey']="OSU"
+        else:
+            json_data['projectKey']=req.projectKey
 
-        
+        if not req.language:
+            json_data['language']="ja"
+        else:
+            json_data['language']=req.language
+
+        # Request body
         data={}
         data['APIKEY'] = self.APIKEY
+
+
         url_value = urllib.urlencode(data)
         req = urllib2.Request(self.url+url_value)
         req.add_header('Content-Type', 'application/json')
@@ -110,16 +120,9 @@ class DoCoMoSentenceUnderstanding(object):
                 print words['wordsType']
 
             self.serverSendTime =  the_page['serverSendTime']                
-            
-            #            aaa=DoCoMoUnderstandingSlotStatus()
-#            aaa['slotName'] = 'aaaaa'
-#            print aaa
-            #userU = the_page['userUtterance']
-            #UT=userU['utteranceText']
-            sValue =["AAAA","BBB","CCC"]
-            sValue.append("DDDD")            
+
             if self.commandId == "BC00101":
-                rospy.loginfo("DoCoMoSentenceUnderstanding:雑談")                
+                rospy.loginfo("DoCoMoSentenceUnderstanding:雑談")               
             elif self.commandId == "BK00101":
                 rospy.loginfo("DoCoMoSentenceUnderstanding:知識検索")            
             elif self.commandId == "BT00101":
@@ -132,8 +135,7 @@ class DoCoMoSentenceUnderstanding(object):
                 rospy.loginfo("DoCoMoSentenceUnderstanding:天気")
                 #searchArea,hereArround,date
             elif self.commandId == "BT00401":
-                rospy.loginfo("DoCoMoSentenceUnderstanding:グルメ検索")                                
-                #gourmetGenre,searchArea,hereArround
+                rospy.loginfo("DoCoMoSentenceUnderstanding:グルメ検索")                          #gourmetGenre,searchArea,hereArround
             elif self.commandId == "BT00501":
                 rospy.loginfo("DoCoMoSentenceUnderstanding:ブラウザ")
                 #browser,website
@@ -194,9 +196,8 @@ class DoCoMoSentenceUnderstanding(object):
             elif self.commandId == "SE00301":
                 rospy.loginfo("DoCoMoSentenceUnderstanding:ライブラリエラー")
                 #                
+         
 
-            
-#            return 
             res=DoCoMoUnderstandingRes()
             res.projectKey= self.projectKey
             res.appName=self.appName
