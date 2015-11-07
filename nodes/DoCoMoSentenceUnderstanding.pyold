@@ -117,198 +117,171 @@ class DoCoMoSentenceUnderstanding(object):
             return DoCoMoUnderstandingResponse(success=False)
 
         the_page=json.load(response)
-#        print the_page
+        print the_page
         """   """
         res=DoCoMoUnderstandingRes()
         """   """            
-        res.projectKey = the_page['projectKey']
-        res.appName = (the_page['appInfo'])['appName']
-        res.appKey = (the_page['appInfo'])['appKey']
-        res.clientVer =  the_page['clientVer']
-        res.dialogMode =  the_page['dialogMode']            
-        res.language =  the_page['language']
-        res.userId =  the_page['userId']
-        res.utteranceText = (the_page['userUtterance'])['utteranceText']
-        res.utteranceRevised = (the_page['userUtterance'])['utteranceRevised']
-        for wd in (the_page['userUtterance'])['utteranceWord']:
-            res.utteranceWord.append(wd)
-        for tsk in the_page['taskIdList']:
-            res.taskIdList.append(tsk)
-        res.commandId = ((the_page['dialogStatus'])['command'])['commandId']
-        res.commandName = ((the_page['dialogStatus'])['command'])['commandName']
-        res.serverSendTime =  the_page['serverSendTime']                
+
+
+
+        self.projectKey = the_page['projectKey']
+        self.appName = (the_page['appInfo'])['appName']
+        self.appKey = (the_page['appInfo'])['appKey']
+        self.clientVer =  the_page['clientVer']
+        self.dialogMode =  the_page['dialogMode']            
+        self.language =  the_page['language']
+        self.clientVer =  the_page['clientVer']            
+        self.userId =  the_page['userId']
+        self.utteranceText = (the_page['userUtterance'])['utteranceText']
+         self.taskIdList =  the_page['taskIdList']
+        self.extractedWords = the_page['extractedWords']
+
+        self.commandId = ((the_page['dialogStatus'])['command'])['commandId']
+        self.commandName = ((the_page['dialogStatus'])['command'])['commandName']
+
+        for words in self.extractedWords:
+            print words['wordsValue']
+            print words['wordsType']
+        self.serverSendTime =  the_page['serverSendTime']                
+
 
 
         """  """
-        if res.commandId == "BC00101":
+        if self.commandId == "BC00101":
             rospy.loginfo("DoCoMoSentenceUnderstanding:雑談")               
-            self.extractedWords = the_page['extractedWords']
-            for words in self.extractedWords:
-                wd = DoCoMoUnderstandingEtractedWords()            
-                wd.wordsValue = words['wordsValue']                
-                for wt in words['wordsType']:
-                    wd.wordsType.append(wt)
-                res.extractedWords.append(wd)
 
-        elif res.commandId == "BK00101":
-            rospy.loginfo("DoCoMoSentenceUnderstanding:知識検索")
-            self.extractedWords = the_page['extractedWords']
-            for words in self.extractedWords:
-                wd = DoCoMoUnderstandingEtractedWords()            
-                wd.wordsValue = words['wordsValue']                
-                for wt in words['wordsType']:
-                    wd.wordsType.append(wt)
-                res.extractedWords.append(wd)
+
+
+
+
             
-        elif res.commandId == "BT00101":
+        elif self.commandId == "BK00101":
+            rospy.loginfo("DoCoMoSentenceUnderstanding:知識検索")            
+        elif self.commandId == "BT00101":
             rospy.loginfo("DoCoMoSentenceUnderstanding:乗換案内")
             #stationTo, stationFrom
             self.slotStatus = (the_page['dialogStatus'])['slotStatus']
             for slot in self.slotStatus:
-                st = DoCoMoUnderstandingSlotStatus()                    
-                st.slotName  = slot['slotName']
-                st.slotValue = slot['slotValue']
-                st.ValueType = slot['valueType']
-                res.slotStatus.append(st)
-            
-            self.extractedWords = the_page['extractedWords']
-            for words in self.extractedWords:
-                wd = DoCoMoUnderstandingEtractedWords()            
-                wd.wordsValue = words['wordsValue']                
-                for wt in words['wordsType']:
-                    wd.wordsType.append(wt)
-                res.extractedWords.append(wd)
+                print slot['slotName']
+                print slot['slotValue']
+            print slot['valueType']
+            st = DoCoMoUnderstandingSlotStatus()                    
+            st.slotName  = slot['slotName']
+            st.slotValue = slot['slotValue']
+            st.ValueType = slot['valueType']
+            res.slotStatus.append(st)
 
-
-
-        elif res.commandId == "BT00201":
+        elif self.commandId == "BT00201":
             rospy.loginfo("DoCoMoSentenceUnderstanding:地図")
             #searchArea,hereArround,facilityName
-            self.slotStatus = (the_page['dialogStatus'])['slotStatus']
-            for slot in self.slotStatus:
-                st = DoCoMoUnderstandingSlotStatus()                    
-                st.slotName  = slot['slotName']
-                st.slotValue = slot['slotValue']
-                try:
-                    st.ValueType = slot['valueType']
-                except:
-                    pass
-                res.slotStatus.append(st)
-
-            self.extractedWords = the_page['extractedWords']
-            for words in self.extractedWords:
-                wd = DoCoMoUnderstandingEtractedWords()            
-                wd.wordsValue = words['wordsValue']                
-                for wt in words['wordsType']:
-                    wd.wordsType.append(wt)
-                res.extractedWords.append(wd)
-
-        elif res.commandId == "BT00301":
+        elif self.commandId == "BT00301":
             rospy.loginfo("DoCoMoSentenceUnderstanding:天気")
-            #searchArea,hereArround,daten
-            self.slotStatus = (the_page['dialogStatus'])['slotStatus']
-            for slot in self.slotStatus:
-                st = DoCoMoUnderstandingSlotStatus()                    
-                st.slotName  = slot['slotName']
-                st.slotValue = slot['slotValue']
-                try:
-                    st.ValueType = slot['valueType']
-                except:
-                    pass
-                res.slotStatus.append(st)
-            
-            self.extractedWords = the_page['extractedWords']
-            for words in self.extractedWords:
-                wd = DoCoMoUnderstandingEtractedWords()            
-                wd.wordsValue = words['wordsValue']                
-                for wt in words['wordsType']:
-                    wd.wordsType.append(wt)
-                res.extractedWords.append(wd)
-
-        elif res.commandId == "BT00401":
+            #searchArea,hereArround,date
+        elif self.commandId == "BT00401":
             rospy.loginfo("DoCoMoSentenceUnderstanding:グルメ検索")                      #gourmetGenre,searchArea,hereArround
-        elif res.commandId == "BT00501":
+        elif self.commandId == "BT00501":
             rospy.loginfo("DoCoMoSentenceUnderstanding:ブラウザ")
             #browser,website
-        elif res.commandId == "BT00601":
+        elif self.commandId == "BT00601":
             rospy.loginfo("DoCoMoSentenceUnderstanding:観光案内")
             #searchArea,hereArround,sightseeing
-        elif res.commandId == "BT00701":
+        elif self.commandId == "BT00701":
             rospy.loginfo("DoCoMoSentenceUnderstanding:カメラ")
             #
-        elif res.commandId == "BT00801":
+        elif self.commandId == "BT00801":
             rospy.loginfo("DoCoMoSentenceUnderstanding:ギャラリー")
             #
-        elif res.commandId == "BT00901":
+        elif self.commandId == "BT00901":
             rospy.loginfo("DoCoMoSentenceUnderstanding:通話")
             #phoneTo
-            res.contentSource=(the_page['content'])['contentSource']
-            res.contentType=(the_page['content'])['contentType']
-            res.contentValue=(the_page['content'])['contentValue']            
-
             self.slotStatus = (the_page['dialogStatus'])['slotStatus']
             for slot in self.slotStatus:
-                st = DoCoMoUnderstandingSlotStatus()                    
-                st.slotName  = slot['slotName']
-                st.slotValue = slot['slotValue']
-                st.ValueType = slot['valueType']
-                res.slotStatus.append(st)
+                print slot['slotName']
+                print slot['slotValue']
+            print slot['valueType']
+            st = DoCoMoUnderstandingSlotStatus()                    
+            st.slotName  = slot['slotName']
+            st.slotValue = slot['slotValue']
+            st.ValueType = slot['valueType']
+            res.slotStatus.append(st)
 
-            self.extractedWords = the_page['extractedWords']
-            for words in self.extractedWords:
-                wd = DoCoMoUnderstandingEtractedWords()            
-                wd.wordsValue = words['wordsValue']                
-                for wt in words['wordsType']:
-                    wd.wordsType.append(wt)
-                res.extractedWords.append(wd)
-            for i in res.extractedWords:
-                print unicode(i)
-
-        elif res.commandId == "BT01001":
+        elif self.commandId == "BT01001":
             rospy.loginfo("DoCoMoSentenceUnderstanding:メール")
             #mailTo,mailBody
-        elif res.commandId == "BT01101":
+        elif self.commandId == "BT01101":
             rospy.loginfo("DoCoMoSentenceUnderstanding:メモ登録")
             #memoBody
-        elif res.commandId == "BT01102":
+        elif self.commandId == "BT01102":
             rospy.loginfo("DoCoMoSentenceUnderstanding:メモ参照")
             #memoBody
-        elif res.commandId == "BT01201":
+        elif self.commandId == "BT01201":
             rospy.loginfo("DoCoMoSentenceUnderstanding:アラーム")
             #time
-        elif res.commandId == "BT01301":
+        elif self.commandId == "BT01301":
             rospy.loginfo("DoCoMoSentenceUnderstanding:スケジュール登録")
             #date,time,scheduleBody
-        elif res.commandId == "BT01302":
+        elif self.commandId == "BT01302":
             rospy.loginfo("DoCoMoSentenceUnderstanding:スケジュール参照")
             #date,time
-        elif res.commnadId == "BT01501":
+        elif self.commnadId == "BT01501":
             rospy.loginfo("DoCoMoSentenceUnderstanding:端末設定")
             #setting
-        elif res.commandId == "BT01601":
+        elif self.commandId == "BT01601":
             rospy.loginfo("DoCoMoSentenceUnderstanding:SNS投稿")                
             #snsSource,snsBody
-        elif res.commandId == "BT90101":
+        elif self.commandId == "BT90101":
             rospy.loginfo("DoCoMoSentenceUnderstanding:キャンセル")
             #
-        elif res.commandId == "BM00101":
+        elif self.commandId == "BM00101":
             rospy.loginfo("DoCoMoSentenceUnderstanding:地図乗換")
             #searchArea
-        elif res.commandId == "BM00201":
+        elif self.commandId == "BM00201":
             rospy.loginfo("DoCoMoSentenceUnderstanding:通話メール")                               #phoneTo
-        elif res.commandId == "SE00101":
+        elif self.commandId == "SE00101":
             rospy.loginfo("DoCoMoSentenceUnderstanding:判定不能")                
                 #
-        elif res.commandId == "SE00201":
+        elif self.commandId == "SE00201":
             rospy.loginfo("DoCoMoSentenceUnderstanding:サーバエラー１")
              #
-        elif res.commandId == "SE00202":
+        elif self.commandId == "SE00202":
             rospy.loginfo("DoCoMoSentenceUnderstanding:サーバエラー２")
              #
-        elif res.commandId == "SE00301":
+        elif self.commandId == "SE00301":
             rospy.loginfo("DoCoMoSentenceUnderstanding:ライブラリエラー")
                 #                
+         
+
+
+        res.projectKey= self.projectKey
+        res.appName=self.appName
+        res.appKey = self.appKey
+        res.clientVer = self.clientVer
+        res.dialogMode =self.dialogMode
+        res.language = self.language
+        res.clientVer = self.clientVer
+        res.userId = self.userId
+        res.commandId = self.commandId 
+        res.commandName = self.commandName
+
+#            self.slotStatus = (the_page['dialogStatus'])['slotStatus']
+#            for slot in self.slotStatus:
+#                st = DoCoMoUnderstandingSlotStatus()
+#                st.slotName  = slot['slotName']
+#                st.slotValue = slot['slotValue']
+#                st.ValueType = slot['valueType']
+#                res.slotStatus.append(st)
+
+#            res.contentSource = self.contentSource
                 
+#            res.taskIdList = self.taskIdList
+#            self.extractedWords = the_page['extractedWords']
+        for words in self.extractedWords:
+            wd = DoCoMoUnderstandingEtractedWords()
+            wd.wordsValue = words['wordsValue']
+#                wd.wordsType =  words['wordsType']
+            res.extractedWords.append(wd)
+          
+        res.serverSendTime =self.serverSendTime 
         return DoCoMoUnderstandingResponse(success=False, response=res)
 
 

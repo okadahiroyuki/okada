@@ -120,9 +120,8 @@ class DoCoMoSentenceUnderstanding(object):
         print the_page
         """   """
         res=DoCoMoUnderstandingRes()
-         
         """   """            
-        self.projectKey = the_page['projectKey']
+#        self.projectKey=  the_page['projectKey']
         self.appName = (the_page['appInfo'])['appName']
         self.appKey = (the_page['appInfo'])['appKey']
         self.clientVer =  the_page['clientVer']
@@ -131,21 +130,20 @@ class DoCoMoSentenceUnderstanding(object):
         self.clientVer =  the_page['clientVer']            
         self.userId =  the_page['userId']
         self.utteranceText = (the_page['userUtterance'])['utteranceText']
-        
+        self.taskIdList =  the_page['taskIdList']
+        self.extractedWords = the_page['extractedWords']
+
         self.commandId = ((the_page['dialogStatus'])['command'])['commandId']
         self.commandName = ((the_page['dialogStatus'])['command'])['commandName']
 
-
-
-        self.taskIdList =  the_page['taskIdList']
-
-        self.extractedWords = the_page['extractedWords']
         for words in self.extractedWords:
             print words['wordsValue']
             print words['wordsType']
-
         self.serverSendTime =  the_page['serverSendTime']                
-        
+
+
+
+        """  """
         if self.commandId == "BC00101":
             rospy.loginfo("DoCoMoSentenceUnderstanding:雑談")               
 

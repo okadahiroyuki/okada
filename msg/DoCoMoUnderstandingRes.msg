@@ -17,8 +17,8 @@ string contentValue
 string projectSpecific
 string utteranceText
 string utteranceRevised
-string utteranceWord
-string taskIdList
+string[] utteranceWord
+string[] taskIdList
 DoCoMoUnderstandingEtractedWords[] extractedWords
 string serverSendTime
 
