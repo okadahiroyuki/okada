@@ -12,3 +12,4 @@ string lon
 string utteranceText 
 string utteranceWord 
 string utteranceKana 
+string projectSpecific 
