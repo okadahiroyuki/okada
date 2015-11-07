@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 # -*- Python -*-
 """
-    DoCoMoUnderstanding.py
+    DoCoMoUnderstandingSrv.py
 
     Service Server for DoCoMo SentenceUnderstanding API
 
@@ -50,18 +50,18 @@ json_data={
     }
 }
 
-class DoCoMoSentenceUnderstanding(object):
-    """ DoCoMoSentenceUnderstanding class """
+class DoCoMoSentenceUnderstandingSrv(object):
+    """ DoCoMoSentenceUnderstandingSrv class """
     def __init__(self):
         """ Initializer """
 
     def run(self):
         """ run ros node """
         # initialize ros node
-        rospy.init_node('docomoSentenceUnderstanding')
-        rospy.loginfo("start DoCoMoSentenceUnderstanding node")
-        service_server = rospy.Service('docomo_sentenceunderstanding',DoCoMoUnderstanding,self.SentenceUnderstanding_handler)
-        rospy.loginfo("start DoCoMoSentenceUnderstanding service server")
+        rospy.init_node('DocomoSentenceUnderstandingSrv')
+        rospy.loginfo("start DoCoMoSentenceUnderstandingSrv node")
+        service_server = rospy.Service('docomo_sentenceunderstandingsrv',DoCoMoUnderstanding,self.SentenceUnderstanding_handler)
+        rospy.loginfo("start DoCoMoSentenceUnderstandingSrv service server")
         self.APIKEY = rospy.get_param("~APIKEY", "4e4e61744672324d792f533965647867467767654978717445316a3337696430386b453371715246456238")
         self.url = rospy.get_param("~sentence_url","https://api.apigw.smt.docomo.ne.jp/sentenceUnderstanding/v1/task?" )
         
@@ -70,7 +70,7 @@ class DoCoMoSentenceUnderstanding(object):
     def SentenceUnderstanding_handler(self, query):
         """ query sentence understanding """
         """ DoCoMoSentenceUnderstandingReq.msg """
-        rospy.loginfo("DoCoMoSentenceUnderstanding Query:%s", query)
+        rospy.loginfo("DoCoMoSentenceUnderstandingSrv Query:%s", query)
         req = query.request
         if req.utteranceText == '':
             return DoCoMoUnderstandingResponse(success=False)
@@ -341,7 +341,7 @@ def setExtractedWords(self,the_page,res):
 
 if __name__ == '__main__':
     try:
-        node = DoCoMoSentenceUnderstanding()
+        node = DoCoMoSentenceUnderstandingSrv()
         node.run()
     except rospy.ROSInterruptException:
         pass
