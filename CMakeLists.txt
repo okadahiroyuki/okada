@@ -54,10 +54,6 @@ add_message_files(
    DoCoMoQaAnswer.msg
    DoCoMoScenarioReq.msg 
    DoCoMoScenarioRes.msg 
-#   DoCoMoSentenceUnderstandingRes.msg 
-#   DoCoMoSentenceUnderstandingReq.msg 
-#   DoCoMoSentenceUnderstandingSlotStatus.msg 
-#   DoCoMoUnderstandingEtractedWords.msg
    DoCoMoUnderstandingRes.msg 
    DoCoMoUnderstandingReq.msg 
    DoCoMoUnderstandingSlotStatus.msg 
@@ -72,10 +68,7 @@ add_service_files(
   DoCoMoChat.srv
   DoCoMoQa.srv
   DoCoMoScenario.srv
-  DoCoMoSentenceUnderstanding.srv
   DoCoMoUnderstanding.srv
-#   Service1.srv
-#   Service2.srv
 )
 
 ## Generate actions in the 'action' folder

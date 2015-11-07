@@ -1,0 +1,8 @@
+<launch>
+    <!-- DoCoMo SentenceUnderstanding API Service Server-->
+    <node name="DoCoMoUnderstanding" pkg="okada" type="DoCoMoUnderstanding.py" respawn="false" output="screen" >
+        <param name="APIKEY" value="4e4e61744672324d792f533965647867467767654978717445316a3337696430386b453371715246456238" type="string"/>
+        <param name="sentence_url" value="https://api.apigw.smt.docomo.ne.jp/sentenceUnderstanding/v1/task?" type="string"/>
+
+    </node>
+</launch>
