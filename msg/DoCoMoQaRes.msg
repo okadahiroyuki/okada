@@ -3,4 +3,4 @@ Header header
 string code 
 string textForDisplay 
 string textForSpeech 
-DoCoMoQaAnswer[5] answer
+DoCoMoQaAnswer[] answer
