@@ -10,4 +10,18 @@
         <param name="APIKEY" value="4e4e61744672324d792f533965647867467767654978717445316a3337696430386b453371715246456238" type="string"/>
         <param name="qa_url" value="https://api.apigw.smt.docomo.ne.jp/knowledgeQA/v1/ask?" type="string"/>
     </node>
+
+
+    <!-- DoCoMo Chat API Service Server-->
+    <node name="DoCoMoChatSrv" pkg="okada" type="DoCoMoChatSrv.py" respawn="false" output="screen" >
+        <param name="APIKEY" value="4e4e61744672324xd792f533965647867467767654978717445316a3337696430386b453371715246456238" type="string"/>
+        <param name="chat_url" value="https://api.apigw.smt.docomo.ne.jp/dialogue/v1/dialogue" type="string"/>
+
+    </node>
+
+    <!-- DoCoMo Scenario API Service Server-->
+    <node name="DoCoMoScenarioSrv" pkg="okada" type="DoCoMoScenarioSrv.py" respawn="false" output="screen" >
+        <param name="APIKEY" value="4e4e61744672324d792f533965647867467767654978717445316a3337696430386b453371715246456238" type="string"/>
+        <param name="scenario_url" value="https://api.apigw.smt.docomo.ne.jp/scenarioDialogue/v1/registration" type="string"/>
+    </node>
 </launch>

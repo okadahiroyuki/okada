@@ -41,8 +41,8 @@ class DoCoMoQaSrv(object):
         # initialize ros node
         rospy.init_node('DocomoQaSrv')
         rospy.loginfo("start DoCoMoQaSrv node")
-        service_server = rospy.Service('docomo_qasrv',DoCoMoQa,self.Qa_handler)
-        rospy.loginfo("start DoCoMoSentenceUnderstandingSrv service server")
+        service_server = rospy.Service('docomo_qa',DoCoMoQa,self.Qa_handler)
+        rospy.loginfo("start DoCoMoQa service server")
         self.APIKEY = rospy.get_param("~APIKEY", "4e4e61744672324d792f533965647867467767654978717445316a3337696430386b453371715246456238")
         self.url = rospy.get_param("~qa_url","https://api.apigw.smt.docomo.ne.jp/knowledgeQA/v1/ask?" )
         

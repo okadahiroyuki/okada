@@ -58,8 +58,6 @@ add_message_files(
    DoCoMoUnderstandingReq.msg 
    DoCoMoUnderstandingSlotStatus.msg 
    DoCoMoUnderstandingEtractedWords.msg
-#   Message0.msg
-#   Message2.msg
 )
 
 ## Generate services in the 'srv' folder

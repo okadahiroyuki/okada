@@ -3,5 +3,5 @@ Header header
 string utt
 string yomi
 string mode
-string  da
+string da
 string context

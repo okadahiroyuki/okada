@@ -60,8 +60,8 @@ class DoCoMoSentenceUnderstandingSrv(object):
         # initialize ros node
         rospy.init_node('DocomoSentenceUnderstandingSrv')
         rospy.loginfo("start DoCoMoSentenceUnderstandingSrv node")
-        service_server = rospy.Service('docomo_sentenceunderstandingsrv',DoCoMoUnderstanding,self.SentenceUnderstanding_handler)
-        rospy.loginfo("start DoCoMoSentenceUnderstandingSrv service server")
+        service_server = rospy.Service('docomo_sentenceunderstanding',DoCoMoUnderstanding,self.SentenceUnderstanding_handler)
+        rospy.loginfo("start DoCoMoSentenceUnderstanding service server")
         self.APIKEY = rospy.get_param("~APIKEY", "4e4e61744672324d792f533965647867467767654978717445316a3337696430386b453371715246456238")
         self.url = rospy.get_param("~sentence_url","https://api.apigw.smt.docomo.ne.jp/sentenceUnderstanding/v1/task?" )
         
