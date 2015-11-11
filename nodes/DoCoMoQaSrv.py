@@ -78,6 +78,7 @@ class DoCoMoQaSrv(object):
             ans.linkUrl = answer['linkUrl']                    
             res.answer.append(ans)
 
+        print the_page
         return DoCoMoQaResponse(success=True, response=res)
 
 

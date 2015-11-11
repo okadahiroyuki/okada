@@ -24,4 +24,14 @@
         <param name="APIKEY" value="4e4e61744672324d792f533965647867467767654978717445316a3337696430386b453371715246456238" type="string"/>
         <param name="scenario_url" value="https://api.apigw.smt.docomo.ne.jp/scenarioDialogue/v1/registration" type="string"/>
     </node>
+
+    <!-- DoCoMo API Service Client-->    
+    <node name="ChatTRCP" pkg="okada" type="ChatTRCP.py" respawn="false" output="screen" >
+    </node>
+
+    <!-- Rospeex -->    
+  <include file="$(find rospeex_launch)/launch/rospeex_local.launch">
+ </include>
+    <node name="rospeex_audiomonitor" pkg="rospeex_audiomonitor" type="audio_monitor_epd" respawn="false" output="screen" >
+    </node>
 </launch>
