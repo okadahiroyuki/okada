@@ -46,7 +46,7 @@ class ChatTRCP(object):
         rospeex.register_sr_response( self.sr_response )
 
         """日本語（英語もある）でNICT(Googleもある)"""
-        """launchファイルで決めてもいいけど、動的に変更する？"""
+        """launchファイ決めてもいいけど、動的に変更する？"""
         """とりあえず、現状は決め打ち"""
         self.lang = 'ja'
         self.input_engine = 'nict'        
@@ -66,14 +66,57 @@ class ChatTRCP(object):
 
 
 
+        self.req.utteranceText ="富士山の高さを教えて"
+        rospy.wait_for_service('docomo_sentenceunderstanding')
+        understanding = rospy.ServiceProxy('docomo_sentenceunderstanding',DoCoMoUnderstanding)
+        rospy.wait_for_service('docomo_qa')        
+        qa = rospy.ServiceProxy('docomo_qa',DoCoMoQa)
+
+        try:
+            resp = understanding(self.req)
+            if  resp.success:
+                if resp.response.commandId == "BC00101":
+                    """雑談"""
+                    print resp.response.commandId
+
+
+
+                elif resp.response.commandId == "BK00101":
+                    print "aaaaaaaaaaaaaaaaaaa"
+                    print resp.response.commandId
+
+                    self.req_qa = DoCoMoQaReq()
+                    print "aaaaaaaaaaaaaaaaaaa"
+                    """知識検索"""
+                    print self.req_qa
+                    self.req_qa.text = resp.response.utteranceText
+                    print "aaaaaaaaaaaaaaaaaaa"
+                    print self.req_qa
+                    print "aaaaaaaaaaaaaaaaaaa"                    
+                    res_qa = qa(self.req_qa)
+
+                    print res_qa
+                else:
+                    """判定不能"""
+                    """Undeterminable"""     
+                    
+            else:
+                pass
+        except:
+            pass
+
         
+
+
+
+
+
+
         rospy.spin()
 
     def sr_response(self, message):
         rospy.loginfo("sr_responsee:%s", message)
 
-        """ 発話理解APIで分類 """
-        self.req.utteranceText = message
         rospy.wait_for_service('docomo_sentenceunderstanding')
         undersanding = rospy.ServiceProxy('docomo_sentenceunderstanding',DoCoMoUnderstanding)
 
