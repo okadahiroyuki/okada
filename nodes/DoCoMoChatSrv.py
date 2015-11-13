@@ -56,7 +56,18 @@ class DoCoMoChatSrv(object):
         req_data ={}
         req_data['utt'] = req.utt
         req_data['context'] = req.context
-        print req_data
+        req_data['nickname'] = req.nickname
+        req_data['nickname_y'] = req.nickname_y
+        req_data['sex'] = req.sex
+        req_data['bloodtype'] = req.bloodtype
+        req_data['birthdateY'] = req.birthdateY
+        req_data['birthdateM'] = req.birthdateM
+        req_data['birthdateD'] = req.birthdateD
+        req_data['age'] = req.age
+        req_data['constellations'] = req.constellations
+        req_data['place'] = req.place
+        req_data['mode'] = req.mode
+        req_data['t'] = req.t
 
         req = urllib2.Request(self.api_url, json.dumps(req_data))
         req.add_header('Content-Type', 'application/json')

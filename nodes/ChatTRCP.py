@@ -15,7 +15,9 @@
 __author__ = 'Hiroyuki Okada'
 __version__ = '0.1'
 import sys
+import string
 import time
+import re
 sys.path.append(".")
 import urllib2
 import urllib
@@ -43,7 +45,7 @@ _chat_={
     "constellations":"水瓶",
     "place":"大阪",
     "mode":"dialog",
-    "t":"30"
+    "t":"20"
 }
 
 class ChatTRCP(object):
@@ -109,29 +111,56 @@ class ChatTRCP(object):
         rospy.wait_for_service('docomo_chat')        
         self.chat = rospy.ServiceProxy('docomo_chat',DoCoMoChat)
 
-
+        self.resp_understanding = DoCoMoUnderstandingRes()
+        
+        self.nowmode = "CHAT"
         rospy.spin()
 
     def sr_response(self, message):
         rospy.loginfo("sr_responsee:%s", message)
+        #message が特定のキーワードであれば、それに対応した処理を行う
 
         try:
-            self.req.utteranceText = message
-            resp = self.understanding(self.req)
-            if  resp.success:
-                if resp.response.commandId == "BC00101":
+            # もし現在の会話モードが「しりとり」なら
+            if self.nowmode == "CHAIN":
+                self.resp_understanding.success = True
+                self.resp_understanding.response.commandId = "BC00101"
+                self.resp_understanding.response.utteranceText = message
+            else:
+                self.req.utteranceText = message
+
+                self.resp_understanding = self.understanding(self.req)
+
+            if  self.resp_understanding.success:
+                if self.resp_understanding.response.commandId == "BC00101":
                     """雑談"""
                     rospy.loginfo("TRCP:Chat")
-                    self.req_chat.utt = resp.response.utteranceText
-                    res_chat = self.chat(self.req_chat)
-                    rospy.loginfo("TRCP Chat response:%s",res_chat.response.yomi)
 
-                elif resp.response.commandId == "BK00101":
+                    
+                    src = self.resp_understanding.response.utteranceText
+
+                    # Rospeexを使うと、文字列の最後に「。」が付くので削除する
+                    dst=src.replace('。', '')
+                    self.req_chat.utt = dst
+                    #self.req_chat.utt = self.resp_understanding.response.utteranceText
+
+                    self.res_chat = self.chat(self.req_chat)
+                    rospy.loginfo("TRCP Chat response:%s",self.res_chat.response)
+
+                    """雑談対話からのレスポンスを設定する"""
+                    self.req_chat.mode = self.res_chat.response.mode.encode('utf-8')
+                    self.req_chat.context = self.res_chat.response.context.encode('utf-8')          
+                    if self.res_chat.response.mode == "srtr":
+                        self.nowmode = "CHAIN"
+                    else:
+                        self.nowmode = "CHAT"
+
+                elif self.resp_understanding.response.commandId == "BK00101":
                     """知識検索"""
                     rospy.loginfo("TRCP:Q&A")
                     self.req_qa = DoCoMoQaReq()
-                    self.req_qa.text = resp.response.utteranceText
-                    print resp.response.utteranceText
+                    self.req_qa.text = self.resp_understanding.response.utteranceText
+                    print self.resp_understanding.response.utteranceText
                     res_qa = self.qa(self.req_qa)
                     rospy.loginfo("TRCP Q&A response:%s",res_qa.response.code)
                     """
@@ -149,11 +178,11 @@ class ChatTRCP(object):
                     if res_qa.success:
                         print res_qa.response.textForDisplay
                         rospy.loginfo("TRCP:%s",res_qa.response.textForSpeech)
-                      # for answer in res_qa.response.answer:
-                      #     print answer.rank
-                      #     print answer.answerText
-                      #     print answer.linkText
-                      #     print answer.linkUrl
+                        # for answer in res_qa.response.answer:
+                        #     print answer.rank
+                        #     print answer.answerText
+                        #     print answer.linkText
+                        #     print answer.linkUrl
                         if res_qa.response.code == 'S020000':
                             pass
                         elif res_qa.response.code == 'S020001':
@@ -172,17 +201,15 @@ class ChatTRCP(object):
                             pass
                     else:
                         pass
-
-                        
                 else:
                     """判定不能"""
                     """Undeterminable"""     
-                    
+                    rospy.loginfo("Undeterminable:%s",self.resp_understanding.response.commandId)
+            
             else:
                 pass
         except:
             pass
-
 
         return True
 #        resp = understanding(self.req)
