@@ -60,16 +60,17 @@ class ChatTRCP(object):
         rospy.loginfo("start DoCoMo Chat TRCP node")
         
         """ for ROSpeexInterface """
-        rospeex = ROSpeexInterface()
-        rospeex.init()
-        rospeex.register_sr_response( self.sr_response )
+        self.rospeex = ROSpeexInterface()
+        self.rospeex.init()
+        self.rospeex.register_sr_response( self.sr_response )
+        self.rospeex.set_spi_config(language='ja', engine='nict')
 
         """日本語（英語もある）でNICT(Googleもある)"""
         """launchファイ決めてもいいけど、動的に変更する？"""
         """とりあえず、現状は決め打ち"""
         self.lang = 'ja'
         self.input_engine = 'nict'        
-        rospeex.set_spi_config(language='ja',engine='nict')
+        self.rospeex.set_spi_config(language='ja',engine='nict')
 
         """ 発話理解APIの準備 """
         self.req = DoCoMoUnderstandingReq()
@@ -146,7 +147,7 @@ class ChatTRCP(object):
 
                     self.res_chat = self.chat(self.req_chat)
                     rospy.loginfo("TRCP Chat response:%s",self.res_chat.response)
-
+                    self.rospeex.say(self.res_chat.response.yomi , 'ja', 'nict')
                     """雑談対話からのレスポンスを設定する"""
                     self.req_chat.mode = self.res_chat.response.mode.encode('utf-8')
                     self.req_chat.context = self.res_chat.response.context.encode('utf-8')          
@@ -163,6 +164,8 @@ class ChatTRCP(object):
                     print self.resp_understanding.response.utteranceText
                     res_qa = self.qa(self.req_qa)
                     rospy.loginfo("TRCP Q&A response:%s",res_qa.response.code)
+                    self.rospeex.say(res_qa.response.textForSpeech , 'ja', 'nict')
+
                     """
                     質問回答のレスポンスコードは、下記のいずれかを返却。
                     S020000: 内部のDBからリストアップした回答
