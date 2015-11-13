@@ -72,9 +72,10 @@ class DoCoMoChatSrv(object):
         res.utt = resp_json['utt'].encode('utf-8')
         res.yomi = resp_json['yomi'].encode('utf-8')
         res.mode = resp_json['mode'].encode('utf-8')
-        res.da = resp_json['da'].encode('utf-8')
+        res.da = int(resp_json['da'])
         res.context = resp_json['context'].encode('utf-8')
 
+        rospy.loginfo("DoCoMoChatSrv Querry :%s", res.utt)
         return DoCoMoChatResponse(success=True, response=res)
 
         

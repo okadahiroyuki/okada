@@ -29,6 +29,23 @@ from okada.srv import *
 from okada.msg import *
 
 
+_chat_={
+    "utt":"",
+    "context":"aaabbbccc111222333",
+    "nickname":"あかね",
+    "nickname_y":"アカネ",
+    "sex":"女",
+    "bloodtype":"O",
+    "birthdateY":1990,
+    "birthdateM":2,
+    "birthdateD":5,
+    "age":25,
+    "constellations":"水瓶",
+    "place":"大阪",
+    "mode":"dialog",
+    "t":"30"
+}
+
 class ChatTRCP(object):
     """ ChatTRCP class """
     def __init__(self):
@@ -64,12 +81,33 @@ class ChatTRCP(object):
         self.req.lat = '139.766084'
         self.req.lon = '35.681382'
 
+        """ 雑談対話APIの準備 """
+        self.req_chat = DoCoMoChatReq()
+        self.req_chat.utt = ""
+
+        self.req_chat.context = _chat_["context"]
+        self.req_chat.nickname = _chat_["nickname"]
+        self.req_chat.nickname_y = _chat_["nickname_y"]
+        self.req_chat.sex = _chat_["sex"]
+        self.req_chat.bloodtype = _chat_["bloodtype"]
+        self.req_chat.birthdateY = _chat_["birthdateY"]
+        self.req_chat.birthdateM = _chat_["birthdateM"]
+        self.req_chat.birthdateD = _chat_["birthdateD"]
+        self.req_chat.age = _chat_["age"]
+        self.req_chat.constellations = _chat_["constellations"]
+        self.req_chat.place = _chat_["place"]
+        self.req_chat.mode = _chat_["mode"]
+        self.req_chat.t = _chat_["t"]
+
 
         rospy.wait_for_service('docomo_sentenceunderstanding')
         self.understanding = rospy.ServiceProxy('docomo_sentenceunderstanding',DoCoMoUnderstanding)
+
         rospy.wait_for_service('docomo_qa')        
         self.qa = rospy.ServiceProxy('docomo_qa',DoCoMoQa)
 
+        rospy.wait_for_service('docomo_chat')        
+        self.chat = rospy.ServiceProxy('docomo_chat',DoCoMoChat)
 
 
         rospy.spin()
@@ -78,15 +116,15 @@ class ChatTRCP(object):
         rospy.loginfo("sr_responsee:%s", message)
 
         try:
-            # self.req.utteranceText ="富士山の高さを教えて"
-            #self.req.utteranceText ="世界で一番数の多い虫は"
             self.req.utteranceText = message
             resp = self.understanding(self.req)
             if  resp.success:
                 if resp.response.commandId == "BC00101":
                     """雑談"""
-                    print resp.response.commandId
-
+                    rospy.loginfo("TRCP:Chat")
+                    self.req_chat.utt = resp.response.utteranceText
+                    res_chat = self.chat(self.req_chat)
+                    rospy.loginfo("TRCP Chat response:%s",res_chat.response.yomi)
 
                 elif resp.response.commandId == "BK00101":
                     """知識検索"""
@@ -146,7 +184,7 @@ class ChatTRCP(object):
             pass
 
 
-        
+        return True
 #        resp = understanding(self.req)
 #        print resp
         
