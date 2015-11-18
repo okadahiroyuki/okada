@@ -17,6 +17,7 @@ __version__ = '0.1'
 import sys
 import string
 import time
+import datetime
 import re
 sys.path.append(".")
 import urllib2
@@ -117,8 +118,21 @@ class ChatTRCP(object):
         self.nowmode = "CHAT"
         rospy.spin()
 
+    """ DoCoMo 雑談対話の実行 """
+    def execChat(self, message):
+        # Rospeexを使うと、文字列の最後に「。」が付くので削除する
+        src = message
+        dst=src.replace('。', '')
+        self.req_chat.utt = dst
+
+        self.res_chat = self.chat(self.req_chat)
+        rospy.loginfo("TRCP Chat response:%s",self.res_chat.response)
+        self.rospeex.say(self.res_chat.response.yomi , 'ja', 'nict')
+
+        return True
+
     """ DoCoMo 知識検索の実行 """
-    def execQA(self,message):
+    def execQA(self, message):
         rospy.loginfo("TRCP:Q&A")
         self.req_qa = DoCoMoQaReq()
         self.req_qa.text = message
@@ -132,6 +146,27 @@ class ChatTRCP(object):
         rospy.loginfo("sr_responsee:%s", message)
         #message が特定のキーワードであれば、それに対応した処理を行う
 
+        """ 時間 ->現在時刻を答える"""
+        time = re.compile('(?P<time>何時)').search(message)
+        if time is not None:
+            rospy.loginfo("What Time is it now? :%s", message)        
+            d = datetime.datetime.today()
+            text = u'%d時%d分です。'%(d.hour, d.minute)
+            # rospeex reply
+            self.rospeex.say(text, 'ja', 'nict')
+            return True
+
+        """ 自己紹介 ->挨拶する"""
+        hello = re.compile('(?P<introduce>)自己紹介').search(message)
+        if hello is not None:
+            rospy.loginfo("Self introduce :%s", message)        
+            text = "皆さんこんにちわ。私の名前はイレイサーです。僕は家庭でみんなの手伝いをするために作られたホームサービスロボットなんだ。"
+            # rospeex reply
+            self.rospeex.say(text, 'ja', 'nict')
+            return True
+
+        # 特定のキーワード処理はここまで
+            
         try:
             """ もし現在の会話モードが「しりとり」なら
                 文章理解APIをスキップする
@@ -146,8 +181,10 @@ class ChatTRCP(object):
 
 
             if  self.resp_understanding.success:
-                commnadId = self.resp_understanding.response.commandId
+                commandId = self.resp_understanding.response.commandId
+                rospy.loginfo("<<< %s", commandId)
                 if commandId == "BC00101":
+                    rospy.loginfo("BBBB")
                     """雑談"""
                     rospy.loginfo("TRCP:Chat")
 
@@ -159,19 +196,29 @@ class ChatTRCP(object):
 
                     self.res_chat = self.chat(self.req_chat)
                     rospy.loginfo("TRCP Chat response:%s",self.res_chat.response)
-                    self.rospeex.say(self.res_chat.response.yomi , 'ja', 'nict')
+
                     """雑談対話からのレスポンスを設定する"""
                     self.req_chat.mode = self.res_chat.response.mode.encode('utf-8')
-                    self.req_chat.context = self.res_chat.response.context.encode('utf-8')          
-                    if self.res_chat.response.mode == "srtr":
-                        self.nowmode = "CHAIN"
-                    else:
-                        self.nowmode = "CHAT"
+                    self.req_chat.context = self.res_chat.response.context.encode('utf-8')
 
-                elif commandId  == "BK00101" or commandId  == "BT00101" or commandId  == "BT00201":
+                    if self.nowmode == "CHAIN":
+                        if self.res_chat.response.mode == "srtr":
+                            self.nowmode = "CHAIN"                    
+                            self.rospeex.say(self.res_chat.response.utt , 'ja', 'nict')
+                        else:
+                            self.nowmode = "CHAT"
+                            self.rospeex.say(self.res_chat.response.utt , 'ja', 'nict')
+                    elif self.nowmode == "CHAT":                       
+                        if self.res_chat.response.mode == "srtr":
+                            self.nowmode = "CHAIN"                    
+                            self.rospeex.say(self.res_chat.response.utt , 'ja', 'nict')
+                        else:
+                            self.nowmode = "CHAT"
+                            self.rospeex.say(self.res_chat.response.yomi , 'ja', 'nict')
+
+
+                elif commandId  == "BK00101":
                     """知識検索"""
-                    """乗換案内"""
-                    """地図"""                    
                     rospy.loginfo("TRCP:Q&A")
                     self.req_qa = DoCoMoQaReq()
                     self.req_qa.text = self.resp_understanding.response.utteranceText
@@ -223,73 +270,93 @@ class ChatTRCP(object):
                 elif commandId  == "BT00101":
                     """乗換案内"""
                     rospy.loginfo(":Transfer")
+                    self.execQA(message)                                        
                 elif commandId  == "BT00201":
                     """地図"""
                     rospy.loginfo(":Map")                    
-
+                    self.execQA(message)                    
 
                 elif commandId == "BT00301":
                     """天気"""
                     rospy.loginfo(":Weather")                    
                     """お天気検索"""
                     """http://weather.livedoor.com/weather_hacks/webservice"""
+#                    self.execQA(message)
+                    self.execChat(message)                                        
 
                 elif commandId == "BT00401":
                     """グルメ検索"""
                     rospy.loginfo(":Restaurant")
                     """ グルなびWebサービス"""
                     """http://api.gnavi.co.jp/api/"""
-                    execQA(message)                    
+                    self.execQA(message)                    
 
                     
                 elif commandId == "BT00501":
                     """ブラウザ"""
-                    rospy.loginfo(":Webpage")                    
+                    rospy.loginfo(":Webpage")
+                    self.execQA(message)                                                            
                 elif commandId == "BT00601":
                     """観光案内"""
-                    rospy.loginfo(":Sightseeing")                    
+                    rospy.loginfo(":Sightseeing")
+                    self.execQA(message)                                                            
                 elif commandId == "BT00701":
                     """カメラ"""
-                    rospy.loginfo(":Camera")                    
+                    rospy.loginfo(":Camera")
+                    self.execQA(message)                                                            
                 elif commandId == "BT00801":
                     """ギャラリー"""
-                    rospy.loginfo(":Gallery")                    
+                    rospy.loginfo(":Gallery")
+                    self.execQA(message)                                                            
                 elif commandId == "BT00901":
                     """通信"""
-                    rospy.loginfo(":Coomunincation")                    
+                    rospy.loginfo(":Coomunincation")
+                    self.execQA(message)                                                            
                 elif commandId == "BT01001":
                     """メール"""
-                    rospy.loginfo(":Mail")                    
+                    rospy.loginfo(":Mail")
+                    self.execQA(message)                                                            
                 elif commandId == "BT01101":
                     """メモ登録"""
-                    rospy.loginfo(":Memo input")                                        
+                    rospy.loginfo(":Memo input")
+                    self.execQA(message)                                                            
                 elif commandId == "BT01102":
                     """メモ参照"""
-                    rospy.loginfo(":Memo output")                                        
+                    rospy.loginfo(":Memo output")
+                    self.execQA(message)                                                            
                 elif commandId == "BT01201":
                     """アラーム"""
-                    rospy.loginfo(":Alarm")                                        
+                    rospy.loginfo(":Alarm")
+                    self.execQA(message)                                                            
                 elif commandId == "BT01301":
                     """スケジュール登録"""
-                    rospy.loginfo(":Schedule input")                                        
+                    rospy.loginfo(":Schedule input")
+                    self.execQA(message)
+                    
                 elif commandId == "BT01302":
                     """スケジュール参照"""
                     rospy.loginfo(":Schedule input")
+                    self.execQA(message)                                                            
                 elif commandId == "BT01501":
                     """端末設定"""
                     rospy.loginfo(":Setting")
+                    self.execQA(message)                                                            
                 elif commandId == "BT01601":
                     """SNS投稿"""
-                    rospy.loginfo(":SNS")                    
+                    rospy.loginfo(":SNS")
+                    self.execQA(message)                                                            
                 elif commandId == "BT90101":
                     """キャンセル"""
-                    rospy.loginfo(":Cancel")                    
+                    rospy.loginfo(":Cancel")
+                    self.execQA(message)                                                            
                 elif commandId == "BM00101":
                     """地図乗換"""
-                    rospy.loginfo(":Map transfer")                    
+                    rospy.loginfo(":Map transfer")
+                    self.execQA(message)                                                            
                 elif commandId == "BM00201":
                     """通話メール"""
                     rospy.loginfo(":Short mail")
+                    self.execQA(message)                                                            
                     
                 else:
                     """発話理解APIで判定不能"""
