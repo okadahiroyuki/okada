@@ -117,33 +117,45 @@ class ChatTRCP(object):
         self.nowmode = "CHAT"
         rospy.spin()
 
+    """ DoCoMo 知識検索の実行 """
+    def execQA(self,message):
+        rospy.loginfo("TRCP:Q&A")
+        self.req_qa = DoCoMoQaReq()
+        self.req_qa.text = message
+        res_qa = self.qa(self.req_qa)
+        rospy.loginfo("TRCP Q&A response:%s",res_qa.response.code)
+        self.rospeex.say(res_qa.response.textForSpeech , 'ja', 'nict')
+
+        return True
+
     def sr_response(self, message):
         rospy.loginfo("sr_responsee:%s", message)
         #message が特定のキーワードであれば、それに対応した処理を行う
 
         try:
-            # もし現在の会話モードが「しりとり」なら
+            """ もし現在の会話モードが「しりとり」なら
+                文章理解APIをスキップする
+            """
             if self.nowmode == "CHAIN":
                 self.resp_understanding.success = True
                 self.resp_understanding.response.commandId = "BC00101"
                 self.resp_understanding.response.utteranceText = message
             else:
                 self.req.utteranceText = message
-
                 self.resp_understanding = self.understanding(self.req)
 
+
             if  self.resp_understanding.success:
-                if self.resp_understanding.response.commandId == "BC00101":
+                commnadId = self.resp_understanding.response.commandId
+                if commandId == "BC00101":
                     """雑談"""
                     rospy.loginfo("TRCP:Chat")
 
                     
-                    src = self.resp_understanding.response.utteranceText
-
                     # Rospeexを使うと、文字列の最後に「。」が付くので削除する
+                    src = self.resp_understanding.response.utteranceText
                     dst=src.replace('。', '')
                     self.req_chat.utt = dst
-                    #self.req_chat.utt = self.resp_understanding.response.utteranceText
 
                     self.res_chat = self.chat(self.req_chat)
                     rospy.loginfo("TRCP Chat response:%s",self.res_chat.response)
@@ -156,8 +168,10 @@ class ChatTRCP(object):
                     else:
                         self.nowmode = "CHAT"
 
-                elif self.resp_understanding.response.commandId == "BK00101":
+                elif commandId  == "BK00101" or commandId  == "BT00101" or commandId  == "BT00201":
                     """知識検索"""
+                    """乗換案内"""
+                    """地図"""                    
                     rospy.loginfo("TRCP:Q&A")
                     self.req_qa = DoCoMoQaReq()
                     self.req_qa.text = self.resp_understanding.response.utteranceText
@@ -204,35 +218,96 @@ class ChatTRCP(object):
                             pass
                     else:
                         pass
+
+
+                elif commandId  == "BT00101":
+                    """乗換案内"""
+                    rospy.loginfo(":Transfer")
+                elif commandId  == "BT00201":
+                    """地図"""
+                    rospy.loginfo(":Map")                    
+
+
+                elif commandId == "BT00301":
+                    """天気"""
+                    rospy.loginfo(":Weather")                    
+                    """お天気検索"""
+                    """http://weather.livedoor.com/weather_hacks/webservice"""
+
+                elif commandId == "BT00401":
+                    """グルメ検索"""
+                    rospy.loginfo(":Restaurant")
+                    """ グルなびWebサービス"""
+                    """http://api.gnavi.co.jp/api/"""
+                    execQA(message)                    
+
+                    
+                elif commandId == "BT00501":
+                    """ブラウザ"""
+                    rospy.loginfo(":Webpage")                    
+                elif commandId == "BT00601":
+                    """観光案内"""
+                    rospy.loginfo(":Sightseeing")                    
+                elif commandId == "BT00701":
+                    """カメラ"""
+                    rospy.loginfo(":Camera")                    
+                elif commandId == "BT00801":
+                    """ギャラリー"""
+                    rospy.loginfo(":Gallery")                    
+                elif commandId == "BT00901":
+                    """通信"""
+                    rospy.loginfo(":Coomunincation")                    
+                elif commandId == "BT01001":
+                    """メール"""
+                    rospy.loginfo(":Mail")                    
+                elif commandId == "BT01101":
+                    """メモ登録"""
+                    rospy.loginfo(":Memo input")                                        
+                elif commandId == "BT01102":
+                    """メモ参照"""
+                    rospy.loginfo(":Memo output")                                        
+                elif commandId == "BT01201":
+                    """アラーム"""
+                    rospy.loginfo(":Alarm")                                        
+                elif commandId == "BT01301":
+                    """スケジュール登録"""
+                    rospy.loginfo(":Schedule input")                                        
+                elif commandId == "BT01302":
+                    """スケジュール参照"""
+                    rospy.loginfo(":Schedule input")
+                elif commandId == "BT01501":
+                    """端末設定"""
+                    rospy.loginfo(":Setting")
+                elif commandId == "BT01601":
+                    """SNS投稿"""
+                    rospy.loginfo(":SNS")                    
+                elif commandId == "BT90101":
+                    """キャンセル"""
+                    rospy.loginfo(":Cancel")                    
+                elif commandId == "BM00101":
+                    """地図乗換"""
+                    rospy.loginfo(":Map transfer")                    
+                elif commandId == "BM00201":
+                    """通話メール"""
+                    rospy.loginfo(":Short mail")
+                    
                 else:
-                    """判定不能"""
+                    """発話理解APIで判定不能"""
                     """Undeterminable"""     
                     rospy.loginfo("Undeterminable:%s",self.resp_understanding.response.commandId)
-            
+                    self.rospeex.say("ごめんなさい、良く聞き取れませんでした。" , 'ja', 'nict')
+
+
             else:
+                """発話理解APIがエラーのとき"""
+                rospy.loginfo("DoCoMo 発話理解API failed")
                 pass
         except:
+            """対話プログラムのどこかでエラーのとき"""
+            rospy.loginfo("error")
             pass
 
         return True
-#        resp = understanding(self.req)
-#        print resp
-        
-
-
-
-
-
-
-        #
-        #        try:
-#            ret = self.docomo_qa(message)
-#            if ret.success:
-#                rospy.loginfo("DoCoMoSentenceUnderstanding Response:%s", ret.response)
-#            else:
-#                rospy.loginfo("DoCoMoSentenceUnderstanding Response:failed")            
-#        except:
-#            pass
 
 
 
