@@ -1,0 +1,4 @@
+<launch>
+    <!-- OpenNI for XTION-->
+    <include file="$(find openni2_launch)/launch/openni2.launch">
+</launch>

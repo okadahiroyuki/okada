@@ -1,0 +1,20 @@
+<launch>
+    <arg name="camera" default="hsrb/head_rgbd_sensor" />
+    <arg name="input_rgb_image" default="/hsrb/head_rgbd_sensor/rgb/image_rect_color" />
+    <arg name="input_depth_image" default="/hsrb/head_rgbd_sensor/depth_registered/image_raw" />
+
+    <!-- OpenNI for XTION-->
+    <!--include file="$(find openni2_launch)/launch/openni2.launch"/-->
+    <node name="$(anon dynparam)" pkg="dynamic_reconfigure" type="dynparam" args="set_from_parameters $(arg camera)/driver">
+        <param name="depth_registration" type="bool" value="true" />
+    </node>
+
+    <!-- 背景差分による動きの検知-->
+    <node name="bgsub" pkg="okada" type="bgsub.py" respawn="false" output="screen" >
+	<remap from="input_rgb_image" to="$(arg input_rgb_image)" />
+	<remap from="input_depth_image" to="$(arg input_depth_image)" />
+        <param name="move_threshold" type="int" value="50" />
+    </node>
+</launch>
+
+

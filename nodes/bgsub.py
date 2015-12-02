@@ -55,17 +55,22 @@ class bgsub():
         self.node_name = "bgsub"
         
         rospy.init_node(self.node_name)
-        
+
+        # 動きを検知する閾値
+        self.th = rospy.get_param("~move_threshold", "60")        
+
         # What we do during shutdown
         # シャットダウンの時の処理
         rospy.on_shutdown(self.cleanup)
 
         # 閾値調整用のスライダー生成
         cv2.namedWindow("Motion Edge")
-        cv2.createTrackbar("threshold", "Motion Edge", 60, 255, nothing)
+        cv2.createTrackbar("threshold", "Motion Edge", self.th, 255, nothing)
 
         # 画像の差分を計算するために一回目の処理かどうかを知るため
         self.isStart = True
+
+
 
         
         # Create the OpenCV display window for the RGB image
@@ -88,10 +93,10 @@ class bgsub():
         # Subscribe to the camera image and depth topics and set
         # the appropriate callbacks
         # RGB画像，距離画像を購読するコールバック関数の登録
-        self.image_sub = rospy.Subscriber("/camera/rgb/image_raw", Image, self.image_callback, queue_size=1)
-#        self.image_sub = rospy.Subscriber("input_rgb_image", Image, self.image_callback, queue_size=1)
-        self.depth_sub = rospy.Subscriber("/camera/depth_registered/image_raw", Image, self.depth_callback, queue_size=1)
-#        self.depth_sub = rospy.Subscriber("input_depth_image", Image, self.depth_callback, queue_size=1)        
+#        self.image_sub = rospy.Subscriber("/camera/rgb/image_raw", Image, self.image_callback, queue_size=1)
+        self.image_sub = rospy.Subscriber("input_rgb_image", Image, self.image_callback, queue_size=1)
+#        self.depth_sub = rospy.Subscriber("/camera/depth_registered/image_raw", Image, self.depth_callback, queue_size=1)
+        self.depth_sub = rospy.Subscriber("input_depth_image", Image, self.depth_callback, queue_size=1)        
         
         rospy.loginfo("Waiting for image topics...")
         rospy.wait_for_message("input_rgb_image", Image)
@@ -123,7 +128,7 @@ class bgsub():
         frame = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
 
         # 背景差分を計算するためのしきい値
-        th = cv2.getTrackbarPos("threshold", "Motion Edge")
+        self.th = cv2.getTrackbarPos("threshold", "Motion Edge")
 
         # 一回目は差分画像が無い
         if self.isStart == True:
@@ -132,7 +137,7 @@ class bgsub():
             return 
 
         # 背景差分を計算する
-        im_bg,im_in,im_mask,im_edge = bg_diff(self.frame_prev,frame,th,blur=7)
+        im_bg,im_in,im_mask,im_edge = bg_diff(self.frame_prev,frame,self.th,blur=7)
         # 結果を表示する
         cv2.imshow("Input",im_in)
         cv2.imshow("Background",im_bg)
