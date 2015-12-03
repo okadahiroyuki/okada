@@ -144,9 +144,10 @@ class bgsub():
         cv2.imshow("Background",im_bg)
 
 
-        #im_edge 画像をサーチ
+
+        #im_mask 画像をサーチ
         # image_size = (height, width, depth)
-        img_size = im_edge.shape
+        img_size = im_mask.shape
 
         # Setup SimpleBlobDetector parameters.
         params = cv2.SimpleBlobDetector_Params()
@@ -166,7 +167,6 @@ class bgsub():
                 ptx+=key.pt[0]
                 pty+=key.pt[1]
             pt= ( int(ptx/ len(keypoints)), int(pty/ len(keypoints)))
-            #動いている部分の重心
             print pt
         else:
             pass
@@ -175,10 +175,16 @@ class bgsub():
 
         
         cv2.imshow("Motion Edge",im_edge)
+
+
+
         
 
         # 差分用に一回前の画像を保存しておく
         self.frame_prev = frame
+
+
+
 
 
         # Process any keyboard commands
