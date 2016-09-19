@@ -57,8 +57,8 @@ class DoCoMoScenarioSrv(object):
             print e
             return DoCoMoScenarioResponse(success=False)
         self.resp_json = json.load(self.response)
-        self.app_id = self.resp_json['app_id'].encode('utf-8')
-        rospy.loginfo("DoCoMoScenario:%s", self.app_id)
+#        self.app_id = self.resp_json['app_id'].encode('utf-8')
+#        rospy.loginfo("DoCoMoScenario:%s", self.app_id)
        
         self.urlS = rospy.get_param("~scenario_url", "https://api.apigw.smt.docomo.ne.jp/scenarioDialogue/v1/dialogue")
         
@@ -75,7 +75,7 @@ class DoCoMoScenarioSrv(object):
         req = query.request
         self.req_data = {} 
         self.req_data['voiceText'] = req.voiceText
-        self.req_data['appId'] = self.appId
+#        self.req_data['appId'] = self.appId
         self.req_data['botId'] = 'APIBot'
 #        self.req_data['initTalkingFlag'] = req.initTalkingFlag
 #        self.req_data['initTopicId'] = 'APITOPIC'
