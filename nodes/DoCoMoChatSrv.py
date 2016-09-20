@@ -40,7 +40,7 @@ class DoCoMoChatSrv(object):
         rospy.loginfo("start DoCoMoChat service server")
 
         self.url = rospy.get_param("~chat_url", "https://api.apigw.smt.docomo.ne.jp/dialogue/v1/dialogue")
-        self.APIKEY = rospy.get_param("~APIKEY", "4e4e61744672324d792f533965647867467767654978717445316a3337696430386b453371715246456238")
+        self.APIKEY = rospy.get_param("~APIKEY", "")
 
         self.api_url = self.url + '?APIKEY=%s'%(self.APIKEY)
 
